@@ -1,6 +1,6 @@
-CONNECTALDIR := ../../connectal
+CONNECTALDIR := $(MY_CONNECTAL_DIR)
 
-USER_CLK_PERIOD := 40
+USER_CLK_PERIOD ?= 0 
 
 BUILD_DIR := $(CURDIR)/build
 PROJECTDIR = $(BUILD_DIR)/$(BOARD)
@@ -12,6 +12,8 @@ BSVFILES = LoopIF.bsv
 CPPFILES = test.cpp
 
 CONNECTALFLAGS += -D IMPORT_HOSTIF -D XILINX_SYS_CLK --nocache -v
-CONNECTALFALGS += --mainclockperiod=$(USER_CLK_PERIOD)
+ifneq ($(USER_CLK_PERIOD),0)
+CONNECTALFLAGS += --mainclockperiod=$(USER_CLK_PERIOD)
+endif
 
 include $(CONNECTALDIR)/Makefile.connectal
