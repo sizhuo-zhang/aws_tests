@@ -4,6 +4,7 @@
 #include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 
 uint32_t recv_val = 0;
 sem_t sem;
@@ -21,6 +22,15 @@ public:
 int main() {
     LoopInd indication(IfcNames_LoopIndH2S);
     LoopReqProxy *reqProxy = new LoopReqProxy(IfcNames_LoopReqS2H);
+
+    long actualFrequency = 0;
+    long requestedFrequency = 1e9 / MainClockPeriod;
+    int status = setClockFrequency(0, requestedFrequency, &actualFrequency);
+    fprintf(stderr, "Requested main clock frequency %5.2f, "
+            "actual clock frequency %5.2f MHz status=%d errno=%d\n",
+	        (double)requestedFrequency * 1.0e-6,
+	        (double)actualFrequency * 1.0e-6,
+	        status, (status != 0) ? errno : 0);
 
     sem_init(&sem, 0, 0);
     for (int i = 0; i < 100; i++) {
